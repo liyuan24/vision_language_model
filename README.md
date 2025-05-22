@@ -1,1 +1,3 @@
-# vision_language_model
+# Visiona Language Model
+
+A playground for vision language models.
