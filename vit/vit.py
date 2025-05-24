@@ -1,3 +1,4 @@
+# reference: https://github.com/lucidrains/vit-pytorch/blob/main/vit_pytorch/vit.py
 from typing import Union, Tuple
 
 import torch
@@ -8,7 +9,6 @@ from einops.layers.torch import Rearrange
 
 def pair(t):
     return t if isinstance(t, tuple) else (t, t)
-
 
 class Attention(nn.Module):
     def __init__(self, dim, heads, head_dim, dropout):
