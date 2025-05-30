@@ -160,7 +160,22 @@ class ViT(nn.Module):
         )
         self.pool = pool
         self.classification_head = nn.Linear(dim, num_classes)
-
+        
+    def patchify(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x: the input image of shape (batch_size, channels, height, width)
+        Returns:
+            the tensor of shape (batch_size, num_patches, patch_dim)
+        """
+        assert x.shape[2] % self.patch_size[0] == 0 and x.shape[3] % self.patch_size[1] == 0
+        b, c, h, w = x.shape
+        x = x.reshape(b, c, h // self.patch_size[0], self.patch_size[0], w // self.patch_size[1], self.patch_size[1])
+        # axis reordering
+        x = torch.einsum("b c h p w q -> b h w c p q", x)
+        x = x.reshape(b, h // self.patch_size[0], w // self.patch_size[1], -1)
+        return x
+    
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -203,3 +218,5 @@ if __name__ == "__main__":
     x = torch.randn(2, 3, 224, 224)
     out = vit(x)
     print(out.shape)
+    x_patched = vit.patchify(x)
+    print(x_patched.shape)
